@@ -19,15 +19,11 @@ helpers=r'''function trickAward(name,pts){const now=performance.now();if(now-las
 if 'function trickAward(' not in s:
     rep('function chromeGrad(',helpers+'function chromeGrad(')
 
-# Draw the new physical-looking features with the rest of the playfield.
 rep('bumpers.forEach(drawRealBumper);','drawTrickFeatures();bumpers.forEach(drawRealBumper);')
-
-# Run the trick-shot controller before normal ball physics.
 rep('function physics(){','function physics(){if(runTrickAnimation())return;if(handleTrickShots())return;')
-
-# Reset trick state with every new ball/game.
 rep('function resetBall(){','function resetBall(){trickMode=null;trickCooldown=performance.now()+350;')
 rep('score=0;howieOutPoints=0;currentBall=1;level=1;combo=1;playing=true;','score=0;howieOutPoints=0;trickMode=null;trickCombo=0;lastTrickAt=0;trickTargetHits=[0,0,0];currentBall=1;level=1;combo=1;playing=true;')
 
 p.write_text(s)
 print('v36 patched: loop, ramp, spinner, trick target bank, combo bonus scoring')
+# trigger
