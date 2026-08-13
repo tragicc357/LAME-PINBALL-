@@ -1,0 +1,1 @@
+ctx.strokeRect(500,130,72,1075);ctx.save();ctx.strokeStyle="#ffd21f";ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(502,138);ctx.lineTo(454,108);ctx.stroke();ctx.restore();
