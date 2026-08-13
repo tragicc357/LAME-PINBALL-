@@ -1,0 +1,23 @@
+name: Upgrade LAME Pinball to v20
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'upgrade_v20.py'
+      - '.github/workflows/upgrade-v20.yml'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply v20 upgrade
+        run: python upgrade_v20.py
+      - name: Commit upgraded game
+        run: |
+          git config user.name "tragicc357"
+          git config user.email "tragicc357@gmail.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Upgrade LAME Pinball to v20"
+          git push
