@@ -1,0 +1,22 @@
+name: Apply LAME Pinball v34
+on:
+  push:
+    paths:
+      - '.trigger-v34'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v34 upgrade
+        run: python upgrade_v34.py
+      - name: Commit upgraded game
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v34" || exit 0
+          git push
