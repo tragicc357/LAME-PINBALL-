@@ -35,3 +35,4 @@ s=s.replace('posts.forEach(p=>circleHit(p,1.04,45));hitFlipper("L",left);hitFlip
 
 p.write_text(s)
 print('v14 applied')
+# trigger
