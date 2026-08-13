@@ -18,3 +18,4 @@ rep('function drawHowie(){if(boxOpen<4)return;const h=getHowie();ctx.save();ctx.
 rep('if(boxOpen===4){const p=.08+.18*(.5+.5*Math.sin(performance.now()/90));ctx.fillStyle=`rgba(255,0,0,${p})`;ctx.fillRect(0,cameraY,W,VIEW_H);ctx.fillStyle="#ff1616";ctx.globalAlpha=.35+.65*(.5+.5*Math.sin(performance.now()/70));ctx.beginPath();ctx.arc(65,cameraY+70,23,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(535,cameraY+70,23,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}', 'if(boxOpen===4){const pulse=.5+.5*Math.sin(performance.now()/95),p=.06+.16*pulse;ctx.fillStyle=pulse>.5?`rgba(60,165,255,${p})`:`rgba(255,255,255,${p*.8})`;ctx.fillRect(0,cameraY,W,VIEW_H);ctx.globalAlpha=.38+.62*pulse;ctx.fillStyle=pulse>.5?"#3fa9ff":"#fff";ctx.beginPath();ctx.arc(65,cameraY+70,23,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(535,cameraY+70,23,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}')
 p.write_text(s)
 print('v30 patched')
+# trigger update
