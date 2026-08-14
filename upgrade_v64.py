@@ -30,3 +30,4 @@ if old in s:s=s.replace(old,new,1)
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v64 every-capture relocation applied')
+# trigger v64 workflow
