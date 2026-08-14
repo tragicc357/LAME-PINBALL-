@@ -1,0 +1,39 @@
+from pathlib import Path
+import re
+p=Path('index.html')
+s=p.read_text()
+
+s=s.replace('LAME — Howie Lucas Pinball v36','LAME — Howie Lucas Pinball v37',1)
+
+# Make the trick-shot layer unmistakably visible and physically readable.
+new_draw=r'''function drawTrickFeatures(){ctx.save();const pulse=.72+.28*Math.sin(performance.now()/140);ctx.textAlign="center";
+// TRICK SHOT marquee
+ctx.shadowBlur=18;ctx.shadowColor="#31c9ff";ctx.fillStyle="rgba(2,12,22,.88)";ctx.strokeStyle="#6fe3ff";ctx.lineWidth=4;ctx.fillRect(105,188,390,58);ctx.strokeRect(105,188,390,58);ctx.fillStyle="#ffffff";ctx.font="900 27px Impact,Arial Black";ctx.fillText("TRICK SHOTS • BIG BONUS",300,225);
+// LEFT FULL LOOP - raised double rail with glowing entrance
+ctx.shadowBlur=18;ctx.shadowColor="#2fc9ff";ctx.strokeStyle="#1d2226";ctx.lineWidth=30;ctx.beginPath();ctx.arc(155,420,118,.42*Math.PI,2.52*Math.PI);ctx.stroke();ctx.strokeStyle=chromeGrad(35,290,275,555);ctx.lineWidth=18;ctx.stroke();ctx.strokeStyle=`rgba(60,210,255,${pulse})`;ctx.lineWidth=6;ctx.stroke();ctx.fillStyle="#09131b";ctx.strokeStyle="#70e2ff";ctx.lineWidth=4;ctx.fillRect(72,548,165,58);ctx.strokeRect(72,548,165,58);ctx.fillStyle="#fff";ctx.font="900 19px Impact";ctx.fillText("FULL LOOP",154,572);ctx.fillStyle="#6fe3ff";ctx.font="900 18px Impact";ctx.fillText("+50,000",154,595);ctx.fillStyle="#6fe3ff";ctx.beginPath();ctx.moveTo(139,620);ctx.lineTo(154,642);ctx.lineTo(169,620);ctx.closePath();ctx.fill();
+// RIGHT SKY RAMP - thick raised lane with side rails and chevrons
+ctx.shadowBlur=18;ctx.shadowColor="#ffd21f";ctx.strokeStyle="#202428";ctx.lineWidth=42;ctx.beginPath();ctx.moveTo(430,875);ctx.bezierCurveTo(520,690,500,470,260,300);ctx.stroke();ctx.strokeStyle=chromeGrad(210,280,500,900);ctx.lineWidth=30;ctx.stroke();ctx.strokeStyle="#ffd21f";ctx.lineWidth=5;ctx.stroke();for(let i=0;i<5;i++){const t=i/4,x=430+(300-430)*t+Math.sin(t*Math.PI)*70,y=875+(340-875)*t;ctx.save();ctx.translate(x,y);ctx.rotate(-.5);ctx.fillStyle=i%2?'#ffd21f':'#ffffff';ctx.beginPath();ctx.moveTo(-16,-8);ctx.lineTo(16,0);ctx.lineTo(-16,8);ctx.closePath();ctx.fill();ctx.restore()}ctx.fillStyle="#121212";ctx.strokeStyle="#ffd21f";ctx.lineWidth=4;ctx.fillRect(355,820,165,63);ctx.strokeRect(355,820,165,63);ctx.fillStyle="#fff";ctx.font="900 19px Impact";ctx.fillText("SKY RAMP",438,846);ctx.fillStyle="#ffd21f";ctx.font="900 18px Impact";ctx.fillText("+75,000",438,871);
+// CENTER SPINNER - larger, animated and impossible to miss
+ctx.save();ctx.translate(300,565);ctx.shadowBlur=22;ctx.shadowColor="#ff5af7";ctx.rotate(spinnerAngle);ctx.strokeStyle="#ffffff";ctx.lineWidth=11;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-43,0);ctx.lineTo(43,0);ctx.stroke();ctx.strokeStyle="#ff56ef";ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(0,-37);ctx.lineTo(0,37);ctx.stroke();ctx.beginPath();ctx.arc(0,0,13,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.strokeStyle="#111";ctx.lineWidth=3;ctx.stroke();ctx.restore();ctx.fillStyle="#ff70f2";ctx.font="900 17px Impact";ctx.fillText("SPINNER +7,500",300,510);
+// TRICK TARGET BANK - large standing targets with lit tops
+[235,300,365].forEach((x,i)=>{const hit=performance.now()-trickTargetHits[i]<650;ctx.save();ctx.shadowBlur=hit?28:12;ctx.shadowColor=hit?'#fff':'#ff8b35';const g=ctx.createLinearGradient(x-22,660,x+22,730);g.addColorStop(0,hit?'#fff':'#e8edf1');g.addColorStop(.45,hit?'#ffd21f':'#87939b');g.addColorStop(1,'#171b1e');ctx.fillStyle=g;ctx.strokeStyle=hit?'#fff':'#ff8b35';ctx.lineWidth=4;ctx.fillRect(x-22,665,44,62);ctx.strokeRect(x-22,665,44,62);ctx.fillStyle='#111';ctx.font='900 22px Arial';ctx.fillText(String(i+1),x,704);ctx.fillStyle=hit?'#fff':'#ff9b4b';ctx.beginPath();ctx.arc(x,655,8,0,Math.PI*2);ctx.fill();ctx.restore()});ctx.fillStyle="#ff9b4b";ctx.font="900 15px Impact";ctx.fillText("HIT 1 • 2 • 3 = +40,000 BANK BONUS",300,755);
+// obstacle gates / guide posts
+[[92,805],[508,760],[120,945],[482,930]].forEach((q,i)=>{ctx.save();ctx.shadowBlur=12;ctx.shadowColor=i%2?'#ffd21f':'#6fe3ff';ctx.fillStyle=chromeGrad(q[0]-14,q[1]-14,q[0]+14,q[1]+14);ctx.strokeStyle=i%2?'#ffd21f':'#6fe3ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(q[0],q[1],14,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore()});
+ctx.restore()}'''
+
+s=re.sub(r'function drawTrickFeatures\(\)\{.*?ctx\.restore\(\)\}',new_draw,s,count=1,flags=re.S)
+
+# Enlarge the trick detection zones to make the shots realistically reachable.
+s=s.replace('ball.x>75&&ball.x<185&&ball.y>520&&ball.y<700','ball.x>60&&ball.x<225&&ball.y>500&&ball.y<720',1)
+s=s.replace('ball.x>355&&ball.x<465&&ball.y>670&&ball.y<835','ball.x>335&&ball.x<500&&ball.y>700&&ball.y<920',1)
+s=s.replace('const sx=302,sy=545,sd=Math.hypot(ball.x-sx,ball.y-sy);if(sd<ball.r+27','const sx=300,sy=565,sd=Math.hypot(ball.x-sx,ball.y-sy);if(sd<ball.r+43',1)
+
+# Make loop/ramp payout messages larger and hold them longer via status copy.
+s=s.replace('trickAward("FULL LOOP",50000)','trickAward("FULL LOOP COMPLETE!",50000)',1)
+s=s.replace('trickAward("SKY RAMP",75000)','trickAward("SKY RAMP COMPLETE!",75000)',1)
+
+# Add trick-shot instructions to the start panel so players know the features exist.
+s=s.replace('7. Beat Level 5 to win','7. Hit the <b>FULL LOOP</b>, <b>SKY RAMP</b>, <b>SPINNER</b> and <b>TRICK BANK</b> for huge bonus points<br>8. Beat Level 5 to win',1)
+
+p.write_text(s)
+print('v37 patched: highly visible loop, ramp, spinner, targets, bonus gates')
