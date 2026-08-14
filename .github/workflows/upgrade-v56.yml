@@ -1,0 +1,44 @@
+name: Upgrade LAME Pinball to v56
+
+on:
+  push:
+    paths:
+      - '.trigger-v56'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply v56 ramp eject-hole upgrade
+        run: python upgrade_v56.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          s=open('index.html').read()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          if not m: raise SystemExit('script block not found')
+          open('/tmp/lame-v56.js','w').write(m.group(1))
+          PY
+          node --check /tmp/lame-v56.js
+      - name: Verify ramp eject-hole feature
+        run: |
+          grep -q 'EJECT HOLE' index.html
+          grep -q 'RAMP HOLE!' index.html
+          grep -q 'BOX EJECT!' index.html
+          grep -q 'bonus=50000' index.html
+      - name: Commit v56
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v56 ramp eject hole"
+          git push
