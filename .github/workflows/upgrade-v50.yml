@@ -1,0 +1,50 @@
+name: Upgrade LAME Pinball to v50
+
+on:
+  push:
+    paths:
+      - 'trigger-v50.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build direct Facebook share image
+        run: |
+          base64 -d facebook-share-v50.b64 > facebook-share-v50.jpg
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('LAME — Howie Lucas Pinball v49','LAME — Howie Lucas Pinball v50',1)
+          old='''<meta property="og:image" content="https://image.thum.io/get/ogImage/https://tragicc357.github.io/LAME-PINBALL-/facebook-preview-v49.html">\n<meta property="og:image:secure_url" content="https://image.thum.io/get/ogImage/https://tragicc357.github.io/LAME-PINBALL-/facebook-preview-v49.html">\n<meta property="og:image:alt" content="LAME — Howie Lucas Pinball global leaderboard preview">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="https://image.thum.io/get/ogImage/https://tragicc357.github.io/LAME-PINBALL-/facebook-preview-v49.html">'''
+          new='''<meta property="og:image" content="https://tragicc357.github.io/LAME-PINBALL-/facebook-share-v50.jpg">\n<meta property="og:image:secure_url" content="https://tragicc357.github.io/LAME-PINBALL-/facebook-share-v50.jpg">\n<meta property="og:image:type" content="image/jpeg">\n<meta property="og:image:width" content="600">\n<meta property="og:image:height" content="315">\n<meta property="og:image:alt" content="LAME — Howie Lucas Pinball game board">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="https://tragicc357.github.io/LAME-PINBALL-/facebook-share-v50.jpg">'''
+          if old not in s:
+              raise SystemExit('v49 Open Graph block not found')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          s=open('index.html').read()
+          js='\n'.join(re.findall(r'<script>(.*?)</script>',s,re.S))
+          open('/tmp/game.js','w').write(js)
+          PY
+          node --check /tmp/game.js
+      - name: Commit v50
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html facebook-share-v50.jpg
+          git commit -m "Fix Facebook share image with direct JPG v50" || exit 0
+          git push
