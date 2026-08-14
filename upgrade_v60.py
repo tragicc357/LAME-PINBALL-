@@ -30,3 +30,4 @@ s=s.replace('score=0;scoreShown=0;howieOutPoints=0;', 'score=0;scoreShown=0;poin
 if s==orig: raise SystemExit('no changes')
 p.write_text(s)
 print('v60 upgrade applied')
+# v60 trigger
