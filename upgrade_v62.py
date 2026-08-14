@@ -79,3 +79,4 @@ if old in s:s=s.replace(old,new,1)
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v62 exterior vortex rescue + bonus multiball applied')
+# trigger
