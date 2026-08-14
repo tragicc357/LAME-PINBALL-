@@ -1,0 +1,38 @@
+name: Upgrade LAME Pinball to v63
+on:
+  push:
+    paths:
+      - 'upgrade_v63.py'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v63 relocating-hole upgrade
+        run: python upgrade_v63.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          Path('/tmp/lame-v63.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/lame-v63.js
+      - name: Verify v63 features
+        run: |
+          grep -q 'Howie Lucas Pinball v63' index.html
+          grep -q 'relocateCaptureHole' index.html
+          grep -q 'HOLE MOVED' index.html
+          grep -q '3-(h.hits' index.html
+      - name: Commit v63
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Upgrade LAME Pinball to v63'
+          git push
