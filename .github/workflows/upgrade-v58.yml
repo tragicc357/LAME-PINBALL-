@@ -1,0 +1,44 @@
+name: Upgrade LAME Pinball to v58
+
+on:
+  push:
+    paths:
+      - '.trigger-v58'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply v58 RPC leaderboard fix
+        run: python upgrade_v58.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          s=open('index.html').read()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          if not m: raise SystemExit('script block not found')
+          open('/tmp/lame-v58.js','w').write(m.group(1))
+          PY
+          node --check /tmp/lame-v58.js
+      - name: Verify RPC client
+        run: |
+          grep -q 'LAME — Howie Lucas Pinball v58' index.html
+          grep -q 'lame_game_get_stats' index.html
+          grep -q 'lame_game_record_start' index.html
+          grep -q 'lame_game_record_finish' index.html
+      - name: Commit v58
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v58 direct leaderboard RPC"
+          git push
