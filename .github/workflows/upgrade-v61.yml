@@ -1,0 +1,40 @@
+name: Upgrade LAME Pinball to v61
+on:
+  push:
+    paths:
+      - upgrade_v61.py
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v61 hole and vortex upgrade
+        run: python upgrade_v61.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          a=s.index('<script>')+len('<script>')
+          b=s.rindex('</script>')
+          Path('/tmp/game.js').write_text(s[a:b])
+          PY
+          node --check /tmp/game.js
+      - name: Verify v61 features
+        run: |
+          grep -q 'Pinball v61' index.html
+          grep -q 'function levelCaptureHoles' index.html
+          grep -q 'function levelVortexHoles' index.html
+          grep -q 'function runHoleCapture' index.html
+          grep -q 'drawCaptureHoles' index.html
+          grep -q '50K' index.html
+      - name: Commit v61
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Upgrade LAME Pinball to v61'
+          git push
