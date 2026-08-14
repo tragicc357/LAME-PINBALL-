@@ -1,0 +1,38 @@
+name: Upgrade LAME Pinball to v42
+on:
+  push:
+    paths:
+      - 'upgrade_v42.trigger'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore v39 feature build source
+        run: git show 0dc0c1690b57373dcdf0f4e96959a919ad41e685:index.html > index.html
+      - name: Apply safe v42 repair
+        run: python upgrade_v42.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          if not scripts:
+              raise SystemExit('No inline script found')
+          Path('/tmp/game.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/game.js
+      - name: Commit verified v42
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v42 verified" || exit 0
+          git push
