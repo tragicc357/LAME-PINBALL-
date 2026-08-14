@@ -9,7 +9,6 @@ css='''\n/* v67: lower gameplay HUD + readability */\n.hud{grid-template-columns
 if '</style>' not in s: raise SystemExit('style close missing')
 s=s.replace('</style>',css+'</style>',1)
 
-# Move box status below the lower score panel and split right-hand score panel between COMBO and BALLS LEFT.
 old='<div class="boxStatus"><div class="boxTitle"><span>BOX STATUS</span><span>20,000 PTS = OPEN 1 FLAP</span></div><div class="flaps"><div class="flap" id="flap1">1</div><div class="flap" id="flap2">2</div><div class="flap" id="flap3">3</div><div class="flap" id="flap4">4</div></div></div><div class="table">'
 new='<div class="table">'
 if old not in s: raise SystemExit('original box status position missing')
@@ -20,7 +19,6 @@ new='<div id="liveScoreView" class="liveScoreView hide"><div><span class="liveSc
 if old not in s: raise SystemExit('live score panel target missing')
 s=s.replace(old,new,1)
 
-# Add BALLS LEFT element and keep it synced with current ball count.
 old='liveComboX=document.getElementById("liveComboX");const playsEl='
 new='liveComboX=document.getElementById("liveComboX"),liveBallCount=document.getElementById("liveBallCount");const playsEl='
 if old not in s: raise SystemExit('live ball element declaration target missing')
@@ -33,3 +31,4 @@ s=s.replace(old,new,1)
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v67 lower HUD + readability update applied')
+# trigger v67
