@@ -1,0 +1,42 @@
+name: Upgrade LAME Pinball to v53
+
+on:
+  push:
+    paths:
+      - '.trigger-v53'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply v53 visibility upgrade
+        run: python upgrade_v53.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          s=open('index.html').read()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          if not m: raise SystemExit('script block not found')
+          open('/tmp/lame-v53.js','w').write(m.group(1))
+          PY
+          node --check /tmp/lame-v53.js
+      - name: Verify watch computer UI
+        run: |
+          grep -q 'WATCH COMPUTER PLAY — SMART AUTO MODE' index.html
+          grep -q '#startScreen{align-items:flex-start' index.html
+      - name: Commit v53
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v53 visible computer mode"
+          git push
