@@ -1,0 +1,38 @@
+name: Upgrade LAME Pinball to v60
+on:
+  push:
+    paths:
+      - 'upgrade_v60.py'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v60 point popup upgrade
+        run: python upgrade_v60.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          assert m, 'script missing'
+          Path('/tmp/game.js').write_text(m.group(1))
+          PY
+          node --check /tmp/game.js
+      - name: Verify v60 features
+        run: |
+          grep -q 'Pinball v60' index.html
+          grep -q 'function showPointPopup' index.html
+          grep -q 'drawPointPopups' index.html
+      - name: Commit v60
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Upgrade LAME Pinball to v60'
+          git push
