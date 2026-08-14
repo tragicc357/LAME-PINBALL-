@@ -85,3 +85,4 @@ s=s.replace(needle,personal+needle,1)
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v65 two holes + chrome ball + personal best tabs + stars applied')
+# trigger v65 workflow
