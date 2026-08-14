@@ -1,0 +1,42 @@
+name: Upgrade LAME Pinball to v59
+
+on:
+  push:
+    paths:
+      - '.trigger-v59'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply v59 direct DB edge upgrade
+        run: python upgrade_v59.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          s=open('index.html').read()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          if not m: raise SystemExit('script block not found')
+          open('/tmp/lame-v59.js','w').write(m.group(1))
+          PY
+          node --check /tmp/lame-v59.js
+      - name: Verify v59 API path
+        run: |
+          grep -q 'Howie Lucas Pinball v59' index.html
+          grep -q 'fetch(GAME_API,o)' index.html
+      - name: Commit v59
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Upgrade LAME Pinball to v59 direct DB leaderboard"
+          git push
