@@ -8,7 +8,6 @@ s=s.replace('LEVEL_GOAL=1000000','LEVEL_GOAL=3000000',1)
 s=s.replace('Every <b>1,000,000 points</b> clears a level','Every <b>3,000,000 points</b> clears a level',1)
 s=s.replace('NEXT LEVEL: <b id="nextLevelIndicator">2</b>','NEXT LEVEL: <b id="nextLevelIndicator">2</b> • GOAL: <b>3,000,000</b>',1)
 
-# Replace the complete trick-shot engine so every level gets a different, evenly-spaced layout.
 start=s.find('function trickAward(')
 end=s.find('function chromeGrad(',start)
 if start<0 or end<0:
@@ -37,12 +36,10 @@ L.targets.xs.forEach((x,i)=>{const hit=now-trickTargetHits[i]<700;ctx.save();ctx
 L.gates.forEach((q,i)=>{ctx.save();ctx.shadowBlur=14;ctx.shadowColor=i%2?"#ffd21f":"#6fe3ff";ctx.fillStyle=chromeGrad(q[0]-14,q[1]-14,q[0]+14,q[1]+14);ctx.strokeStyle=i%2?"#ffd21f":"#6fe3ff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(q[0],q[1],14,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore()});ctx.restore()}
 '''
 s=s[:start]+block+s[end:]
-
-# Animated rolling/spinning-wheel style Howie-out point counter.
 s=s.replace('function drawWorld(){','function drawWorld(){if(boxOpen===4){const d=howieOutPoints-howieOutPointsShown;if(Math.abs(d)<1)howieOutPointsShown=howieOutPoints;else howieOutPointsShown+=d*(Math.abs(d)>500000?.045:Math.abs(d)>100000?.06:.09)}',1)
 s=s.replace('if(boxOpen===4){howieOutPoints=0;setStatus("HOWIE IS OUT THE BOX! DOUBLE POINTS!")}','if(boxOpen===4){howieOutPoints=0;howieOutPointsShown=0;setStatus("HOWIE IS OUT THE BOX! DOUBLE POINTS!")}',1)
 s=s.replace('ctx.fillText("+"+howieOutPoints.toLocaleString()+" POINTS",300,713,410)','ctx.fillText("+"+Math.floor(howieOutPointsShown).toLocaleString()+" POINTS",300,713,410)',1)
 s=s.replace('score=0;howieOutPoints=0;','score=0;howieOutPoints=0;howieOutPointsShown=0;',1)
-
 p.write_text(s)
 print('v38 patched: 5 unique trick layouts, active glows, 3M level goal, rolling Howie-out counter')
+# trigger v38
