@@ -1,0 +1,33 @@
+name: Upgrade LAME Pinball to v48
+on:
+  push:
+    paths:
+      - 'upgrade_v48.trigger'
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v48 upgrade
+        run: python upgrade_v48.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re, pathlib
+          s=pathlib.Path('index.html').read_text()
+          m=re.search(r'<script>(.*)</script>',s,re.S)
+          if not m: raise SystemExit('script block missing')
+          pathlib.Path('/tmp/game-v48.js').write_text(m.group(1))
+          PY
+          node --check /tmp/game-v48.js
+      - name: Commit v48
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Upgrade LAME Pinball to v48"
+          git push
