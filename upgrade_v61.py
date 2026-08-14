@@ -58,3 +58,4 @@ s=s.replace('12. Beat Level 5 to win', '12. Each level has <b>3 capture holes</b
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v61 hole + vortex upgrade applied')
+# trigger
