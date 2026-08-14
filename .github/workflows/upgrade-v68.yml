@@ -1,0 +1,41 @@
+name: Upgrade LAME Pinball to v68
+on:
+  push:
+    paths:
+      - upgrade_v68.py
+      - .github/workflows/upgrade-v68.yml
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v68 layout upgrade
+        run: python upgrade_v68.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          blocks=re.findall(r'<script>(.*?)</script>',s,re.S)
+          Path('/tmp/lame-v68.js').write_text('\n'.join(blocks))
+          PY
+          node --check /tmp/lame-v68.js
+      - name: Verify v68 features
+        run: |
+          grep -q 'Pinball v68' index.html
+          grep -q 'vortexCenterBanner' index.html
+          grep -q 'table.after(controls)' index.html
+          grep -q 'controls.after(scorePanel)' index.html
+          grep -q 'scorePanel.after(boxStatus)' index.html
+          grep -q 'showVortexCenterBanner' index.html
+      - name: Commit v68
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Upgrade LAME Pinball to v68"
+          git push
