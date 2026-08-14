@@ -1,0 +1,39 @@
+name: Upgrade LAME Pinball to v66
+on:
+  push:
+    paths:
+      - upgrade_v66.py
+      - .github/workflows/upgrade-v66.yml
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v66 upgrade
+        run: python upgrade_v66.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          js=s.rsplit('<script>',1)[-1].split('</script>',1)[0]
+          Path('/tmp/lame-v66.js').write_text(js)
+          PY
+          node --check /tmp/lame-v66.js
+      - name: Verify v66 features
+        run: |
+          grep -q 'Pinball v66' index.html
+          grep -q 'slice(0,1)' index.html
+          grep -q 'BOX EJECT BONUS' index.html
+          grep -q 'spawnBonusFireworks' index.html
+          grep -q 'MULTIBALL ACTIVATED' index.html
+      - name: Commit v66
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git commit -m 'Upgrade LAME Pinball to v66'
+          git push
