@@ -7,7 +7,6 @@ if 'LAME — Howie Lucas Pinball v38' not in s:
     raise SystemExit('Expected v38 title not found')
 s=s.replace('LAME — Howie Lucas Pinball v38','LAME — Howie Lucas Pinball v39',1)
 
-# Add launch-rail / perfect-launch / momentum-trail state to the existing trick state.
 needle='trickTargetHits=[0,0,0];'
 if needle not in s:
     raise SystemExit('trick state target not found')
@@ -20,14 +19,12 @@ if anchor not in s:
     raise SystemExit('visual helper anchor not found')
 s=s.replace(anchor,helpers+anchor,1)
 
-# Let the rail become a real animated path before normal physics takes over.
 old='function physics(){if(runTrickAnimation())return;if(handleTrickShots())return;'
 new='function physics(){if(runLaunchRail())return;maybeEnterLaunchRail();if(runLaunchRail())return;if(runTrickAnimation())return;if(handleTrickShots())return;'
 if old not in s:
     raise SystemExit('physics hook target not found')
 s=s.replace(old,new,1)
 
-# Draw the new loop rail and speed trail as part of the playfield.
 if 'drawTrickFeatures();bumpers.forEach(drawRealBumper);' not in s:
     raise SystemExit('draw trick target not found')
 s=s.replace('drawTrickFeatures();bumpers.forEach(drawRealBumper);','drawLaunchLoopRail();drawTrickFeatures();bumpers.forEach(drawRealBumper);',1)
@@ -35,17 +32,15 @@ if 'drawRealBall()' not in s:
     raise SystemExit('ball draw target not found')
 s=s.replace('drawRealBall()','updateBallTrail();drawBallTrail();drawRealBall()',1)
 
-# Reset rail/trail state with each ball.
 s=s.replace('function resetBall(){trickMode=null;trickCooldown=performance.now()+350;','function resetBall(){launchRailActive=false;perfectLaunchPending=false;perfectLaunchAwarded=false;ballTrail=[];momentumTrailUntil=0;trickMode=null;trickCooldown=performance.now()+350;',1)
 
-# Capture the visible meter at release BEFORE the existing release handler resets it.
-insert='''\n["pointerup","pointercancel"].forEach(ev=>{document.getElementById("launchBtn")?.addEventListener(ev,armPerfectLaunchBonus,true)});window.addEventListener("keyup",e=>{if(e.code==="Space")armPerfectLaunchBonus()},true);\n// Any normal hit sound marks a fresh impact and briefly enables the fast-ball trail.\ntry{const __origSfxHit=sfxHit;sfxHit=function(...args){momentumTrailUntil=performance.now()+900;return __origSfxHit(...args)}}catch(e){}\n'''
+insert='''\n["pointerup","pointercancel"].forEach(ev=>{document.getElementById("launchBtn")?.addEventListener(ev,armPerfectLaunchBonus,true)});window.addEventListener("keyup",e=>{if(e.code==="Space")armPerfectLaunchBonus()},true);\ntry{const __origSfxHit=sfxHit;sfxHit=function(...args){momentumTrailUntil=performance.now()+900;return __origSfxHit(...args)}}catch(e){}\n'''
 if '</script>' not in s:
     raise SystemExit('script close not found')
 s=s.replace('</script>',insert+'</script>',1)
 
-# Tell players about the 100% launch bonus.
 s=s.replace('1. Hold <b>LAUNCH</b> and release to fire','1. Hold <b>LAUNCH</b> and release to fire — hit <b>100%</b> for a <b>+20,000 PERFECT LAUNCH</b> bonus',1)
 
 p.write_text(s)
 print('v39 patched: looping launch rail, perfect 100% +20K, impact-only ball speed trail')
+# trigger v39
