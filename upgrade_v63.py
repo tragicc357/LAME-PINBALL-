@@ -36,13 +36,11 @@ new="""}else{const wasVortex=holeCapture.kind==='VORTEX',usedHoleId=holeCapture.
 if old not in s: raise SystemExit('capture eject completion target missing')
 s=s.replace(old,new,1)
 
-# Show remaining uses visually so players understand the rule.
 old="ctx.fillText('50K',h.x,h.y+4)"
 new="ctx.fillText('50K',h.x,h.y+1);ctx.fillStyle='#9beaff';ctx.font='900 9px Arial';ctx.fillText((3-(h.hits||0))+' LEFT',h.x,h.y+15)"
 if old not in s: raise SystemExit('hole label target missing')
 s=s.replace(old,new,1)
 
-# Reset dynamic hole layout on each new level and fresh game.
 s=s.replace("level++;currentBall=1;combo=1;boxOpen=0;nextFlapScore=(level-1)*LEVEL_GOAL+FLAP_GOAL;applyLayout();", "level++;currentBall=1;combo=1;boxOpen=0;nextFlapScore=(level-1)*LEVEL_GOAL+FLAP_GOAL;resetCaptureHolesForLevel();applyLayout();",1)
 s=s.replace("currentBall=1;level=1;combo=1;playing=true;", "currentBall=1;level=1;combo=1;captureHoleLevel=0;captureHoleState=[];resetCaptureHolesForLevel();playing=true;",1)
 
@@ -53,3 +51,4 @@ if old in s:s=s.replace(old,new,1)
 if s==orig: raise SystemExit('no changes applied')
 p.write_text(s)
 print('v63 relocating capture holes applied')
+# trigger
