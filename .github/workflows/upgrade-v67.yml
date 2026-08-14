@@ -1,0 +1,38 @@
+name: Upgrade LAME Pinball to v67
+on:
+  push:
+    paths:
+      - upgrade_v67.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v67 HUD/readability upgrade
+        run: python upgrade_v67.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re, pathlib
+          s=pathlib.Path('index.html').read_text()
+          js='\n'.join(re.findall(r'<script>(.*?)</script>',s,re.S))
+          pathlib.Path('/tmp/game.js').write_text(js)
+          PY
+          node --check /tmp/game.js
+      - name: Verify v67 features
+        run: |
+          grep -q 'Pinball v67' index.html
+          grep -q 'id="liveBallCount"' index.html
+          grep -q 'BALLS LEFT' index.html
+          grep -q 'v67: lower gameplay HUD' index.html
+      - name: Commit v67
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git commit -m "Update LAME Pinball to v67" || exit 0
+          git push
