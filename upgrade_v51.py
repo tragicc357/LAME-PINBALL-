@@ -13,10 +13,6 @@ end=s.find('document.getElementById("againBtn").onclick=',start)
 if start<0 or end<0: raise SystemExit('watch handler markers not found')
 rep='document.getElementById("watchComputer").onclick=()=>{autoPlay=true;nicknameInput.value="Computer";computerLastDecision=null;computerLaunchAt=performance.now()+450;startGame();setStatus("🤖 WATCH COMPUTER PLAY — SMART AUTO MODE")};'
 s=s[:start]+rep+s[end:]
-old='applyLayout();updateFlaps();document.getElementById("startScreen").classList.add("hide");'
-rep2='applyLayout();updateFlaps();if(autoPlay)computerLaunchAt=performance.now()+500;document.getElementById("startScreen").classList.add("hide");'
-if old not in s: raise SystemExit('start launch target not found')
-s=s.replace(old,rep2,1)
 for token in ['LAME — Howie Lucas Pinball v52','SMART AUTO MODE','computerPredictXFor','mainBallSuppressed)return','candidates.push(b)']:
     if token not in s: raise SystemExit('missing '+token)
 p.write_text(s)
