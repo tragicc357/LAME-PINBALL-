@@ -1,0 +1,32 @@
+name: Restore LAME Pinball stable v41
+on:
+  push:
+    paths:
+      - 'rollback_v41.trigger'
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore known-good v38 game
+        run: |
+          git show 18e58481f6e437c70fc321f1772b590ef9d11be6:index.html > index.html
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('LAME — Howie Lucas Pinball v38','LAME — Howie Lucas Pinball v41 STABLE',1)
+          p.write_text(s)
+          PY
+      - name: Commit stable restore
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Restore LAME Pinball v41 stable" || exit 0
+          git push
