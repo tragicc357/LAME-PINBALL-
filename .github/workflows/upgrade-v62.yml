@@ -1,0 +1,40 @@
+name: Upgrade LAME Pinball to v62
+on:
+  push:
+    paths:
+      - upgrade_v62.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v62 exterior vortex rescue upgrade
+        run: python upgrade_v62.py
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          Path('/tmp/game-v62.js').write_text(m.group(1))
+          PY
+          node --check /tmp/game-v62.js
+      - name: Verify v62 features
+        run: |
+          grep -q 'Pinball v62' index.html
+          grep -q 'BONUS BALLS' index.html
+          grep -q "x:28,y:135" index.html
+          grep -q "x:572,y:1258" index.html
+          grep -q 'awardVortexBonusBalls' index.html
+      - name: Commit v62
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Upgrade LAME Pinball to v62' || exit 0
+          git push
