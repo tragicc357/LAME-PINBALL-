@@ -29,3 +29,4 @@ if s==old:
     raise SystemExit('no changes made')
 p.write_text(s,encoding='utf-8')
 print('v69 upgrade applied')
+# trigger v69 after full-quality artwork upload
