@@ -14,3 +14,10 @@
 .achievementToast b,.powerToast,.tutorialCard h3,.instantReplay span,.vortexCenterBanner .big,.vortexCenterBanner .sub,.levelCard h3,.levelCard .next,.victoryCopy h2,.victoryCopy p{text-shadow:0 0 5px #fff,0 0 12px currentColor,0 0 26px currentColor!important;animation:v71WordLights .55s ease-in-out infinite alternate}
 .instantReplay{border-color:transparent!important;box-shadow:none!important}
 @keyframes v71WordLights{from{filter:brightness(1)}to{filter:brightness(1.42)}}
+
+/* v72: frameless bonus-ball announcement with fireworks surrounding the words */
+.vortexCenterBanner{border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;isolation:isolate}
+.vortexCenterBanner span{position:relative;z-index:3;text-shadow:0 0 6px #fff,0 0 18px currentColor,0 0 38px currentColor,0 0 65px #47bfff!important}
+.vortexCenterBanner::before,.vortexCenterBanner::after{content:"";position:absolute;z-index:1;inset:-115px -70px;pointer-events:none;background:radial-gradient(circle at 10% 22%,#fff 0 2px,#ffd21f 3px 5px,transparent 6px),radial-gradient(circle at 88% 18%,#fff 0 2px,#ff4775 3px 6px,transparent 7px),radial-gradient(circle at 4% 72%,#fff 0 2px,#69e6ff 3px 6px,transparent 7px),radial-gradient(circle at 94% 76%,#fff 0 2px,#8cff72 3px 6px,transparent 7px),radial-gradient(circle at 25% 2%,#fff 0 2px,#b983ff 3px 6px,transparent 7px),radial-gradient(circle at 72% 98%,#fff 0 2px,#ffd21f 3px 6px,transparent 7px);filter:drop-shadow(0 0 8px #fff);animation:v72Fireworks .48s ease-out infinite alternate}
+.vortexCenterBanner::after{inset:-75px -120px;transform:rotate(24deg);animation-delay:-.24s;animation-duration:.62s}
+@keyframes v72Fireworks{from{opacity:.48;transform:scale(.72) rotate(-5deg)}to{opacity:1;transform:scale(1.18) rotate(7deg)}}
