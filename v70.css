@@ -9,6 +9,9 @@
 .v70PurpleUnlocked .table{box-shadow:0 0 24px #9b5cff66}.v70LowGraphics .table{box-shadow:none!important}.v70LowGraphics canvas{image-rendering:auto}.v70LowGraphics .powerToast,.v70LowGraphics .tutorialPulse{animation:none!important}
 @media(max-width:430px){.v70TopBar{grid-template-columns:1fr auto}.v70Xp{grid-column:1/-1}.v70Setting input[type=range]{width:115px}.v70Panel{padding:14px}.v70Panel h2{font-size:27px}}
 
+/* v96: always-accessible in-game reset */
+.v96ResetGame{position:absolute;z-index:90;top:12px;left:12px;min-height:44px;padding:8px 12px;border:2px solid #ff8b84;border-radius:10px;background:linear-gradient(#df3e35,#8f130e);color:#fff;font:900 12px Arial;box-shadow:0 0 18px #ff3b3299,inset 0 -4px 0 #650b08;touch-action:manipulation}.v96ResetGame:active{transform:translateY(2px)}.v96ResetGame[hidden]{display:none!important}#dailyModeBadge{top:64px}.powerBadge{top:64px}
+
 /* v71: transparent caption frames, illuminated words, and celebration energy */
 .achievementToast,.powerToast,.tutorialCard,.instantReplay span,.vortexCenterBanner,.levelCard,.victoryCopy{border-color:transparent!important;outline:0!important;background-color:rgba(0,0,0,.32)!important;box-shadow:none!important}
 .achievementToast b,.powerToast,.tutorialCard h3,.instantReplay span,.vortexCenterBanner .big,.vortexCenterBanner .sub,.levelCard h3,.levelCard .next,.victoryCopy h2,.victoryCopy p{text-shadow:0 0 5px #fff,0 0 12px currentColor,0 0 26px currentColor!important;animation:v71WordLights .55s ease-in-out infinite alternate}
