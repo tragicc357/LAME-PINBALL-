@@ -8,3 +8,9 @@
 .shareCardPreview{width:100%;border-radius:12px;border:2px solid #4d5962;margin-top:8px}.unlockGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.unlockCard{background:#090e12;border:1px solid #344450;border-radius:9px;padding:8px;font:800 10px Arial;color:#aab7bf}.unlockCard.unlocked{border-color:#63ff91;color:#fff}.unlockCard b{display:block;color:#ffd21f;margin-bottom:3px}.v70Paused .table canvas{filter:grayscale(.25) brightness(.65)}
 .v70PurpleUnlocked .table{box-shadow:0 0 24px #9b5cff66}.v70LowGraphics .table{box-shadow:none!important}.v70LowGraphics canvas{image-rendering:auto}.v70LowGraphics .powerToast,.v70LowGraphics .tutorialPulse{animation:none!important}
 @media(max-width:430px){.v70TopBar{grid-template-columns:1fr auto}.v70Xp{grid-column:1/-1}.v70Setting input[type=range]{width:115px}.v70Panel{padding:14px}.v70Panel h2{font-size:27px}}
+
+/* v71: transparent caption frames, illuminated words, and celebration energy */
+.achievementToast,.powerToast,.tutorialCard,.instantReplay span,.vortexCenterBanner,.levelCard,.victoryCopy{border-color:transparent!important;outline:0!important;background-color:rgba(0,0,0,.32)!important;box-shadow:none!important}
+.achievementToast b,.powerToast,.tutorialCard h3,.instantReplay span,.vortexCenterBanner .big,.vortexCenterBanner .sub,.levelCard h3,.levelCard .next,.victoryCopy h2,.victoryCopy p{text-shadow:0 0 5px #fff,0 0 12px currentColor,0 0 26px currentColor!important;animation:v71WordLights .55s ease-in-out infinite alternate}
+.instantReplay{border-color:transparent!important;box-shadow:none!important}
+@keyframes v71WordLights{from{filter:brightness(1)}to{filter:brightness(1.42)}}
